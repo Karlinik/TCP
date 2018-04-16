@@ -28,13 +28,16 @@ public class Server {
             System.out.println("Connection accepted from: " + clientSocket.getInetAddress());
 
             Median median = null;
+            //Median2 median2 = null;
             try{
                 median = new Median(clientSocket);
+                //median2 = new Median2(clientSocket);
             }catch(Exception e){
                 System.out.println("Can't initialize Median: " + e);
             }
 
             new Thread(median).start();
+            //new Thread(median2).start();
             System.out.println("Starting thread");
         }
 

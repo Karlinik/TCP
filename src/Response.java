@@ -6,8 +6,8 @@ public class Response {
     private boolean endSession;
 
     Response(boolean closeAfter, String response){
-        this.response = response;
         this.endSession = closeAfter;
+        this.response = response;
     }
 
     Response(String response){

@@ -1,25 +1,20 @@
-import java.io.DataOutputStream;
-import java.io.InputStreamReader;
+import java.io.DataInputStream;
+import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.Scanner;
 
 /**
  * Created by gc2karl on 3/23/2018.
  */
-public class Median implements Runnable{
-    private String delimiter;
+public class Median2 implements Runnable{
     private Socket socket;
-    private DataOutputStream out;
-    private Scanner in;
+    private PrintWriter out;
+    private DataInputStream in;
     private Manipulator manipulator;
 
-    Median(Socket socket) throws Exception {
-        delimiter = Character.toString((char)7) + Character.toString((char)8);
+    Median2(Socket socket) throws Exception {
         this.socket = socket;
-        socket.setKeepAlive(true);
-        socket.setTcpNoDelay(true);
-        this.out = new DataOutputStream(socket.getOutputStream());
-        this.in = new Scanner(new InputStreamReader(socket.getInputStream())).useDelimiter(delimiter);
+        this.out = new PrintWriter(socket.getOutputStream());
+        this.in = new DataInputStream(socket.getInputStream());
         manipulator = new Manipulator();
 
     }
@@ -28,20 +23,29 @@ public class Median implements Runnable{
         try {
             out.flush();
             while(true){
-
+                System.out.println("starting while loop");
+                socket.setKeepAlive(true);
+                socket.setTcpNoDelay(true);
                 socket.setSoTimeout(manipulator.getTimeout());
 
                 Response response = null;
 
-                if(in.hasNext() && !in.hasNext(".*\b")){
-                    response = manipulator.getNextResponse(in.next());
-                }else{
-                    response = manipulator.preValidate(in.next());
+                StringBuilder input = new StringBuilder();
+                int ch;
+                while((ch = in.read()) != -1){
+                    input.append((char)ch);
                 }
 
-                System.out.println("response: " + response.getResponse());
+                String message = input.toString();
+
+                if(message.contains("\b"))
+                    response = manipulator.getNextResponse(message);
+                else
+                    response = manipulator.preValidate(message);
+
+                System.out.println(response.getResponse());
                 if (!response.getResponse().equals("")) {
-                    out.writeBytes(response.getResponse() + delimiter);
+                    out.print(response.getResponse() + "\7\b");
                     out.flush();
                 }
                 if (response.endSession()) {
@@ -58,12 +62,12 @@ public class Median implements Runnable{
 
     private void close(){
         try{
-            System.out.println("Closing connection");
             socket.close();
             out.close();
             in.close();
         }catch(Exception e){
             System.out.println("Can't close all resources: " + e);
+
         }
     }
 }
