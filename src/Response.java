@@ -4,14 +4,16 @@
 public class Response {
     private String response;
     private boolean endSession;
+    private State state;
 
-    Response(boolean closeAfter, String response){
+    Response(boolean closeAfter, String response, State state){
         this.endSession = closeAfter;
         this.response = response;
+        this.state = state;
     }
 
-    Response(String response){
-        this(false, response);
+    Response(String response, State state){
+        this(false, response, state);
     }
 
     public String getResponse(){
@@ -21,4 +23,6 @@ public class Response {
     public boolean endSession(){
         return endSession;
     }
+
+    public State getState(){ return this.state; }
 }

@@ -2,29 +2,33 @@
  * Created by Nikola Karlikova on 23.03.2018.
  */
 public class Coordinates {
-    private int x;
-    private int y;
+    public Integer x;
+    public Integer y;
 
-    Coordinates(int x, int y){
+    Coordinates(Integer x, Integer y){
         this.x = x;
         this.y = y;
     }
 
-    Coordinates(String input){
-        this.parse(input);
-    }
-
-    public int x(){return x;}
-    public int y(){return y;}
+    public Integer x(){return x;}
+    public Integer y(){return y;}
 
 
     public boolean finishReached(){
-        //TBD
-        return true;
+        if(x == -2 && y == 2)
+            return true;
+        return false;
     }
 
-    private Coordinates parse(String input){
-        //TBD
-        return new Coordinates(0,0);
+    public boolean outOfDestination(){
+        if(x == 2 && y == -3)
+            return true;
+        return false;
+    }
+
+    public boolean same(Coordinates coordinates){
+        if(this.x == coordinates.x() && this.y == coordinates.y())
+            return true;
+        return false;
     }
 }
